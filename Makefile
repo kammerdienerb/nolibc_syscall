@@ -17,7 +17,7 @@ endif
 all: libnolibc_syscall.a example
 
 example: libnolibc_syscall.a example.o
-	$(LD) -e $(PREFIX)main example.o $(LDFLAGS) -o example
+	$(LD) -e $(PREFIX)start example.o $(LDFLAGS) -o example
 
 libnolibc_syscall.a: nolibc_syscall.o
 	ar rvs libnolibc_syscall.a nolibc_syscall.o
