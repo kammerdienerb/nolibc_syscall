@@ -14,10 +14,12 @@
     #define WRITE_SYSCALL (0x2000000 + SYS_write)
     #define OPEN_SYSCALL  (0x2000000 + SYS_open)
     #define CLOSE_SYSCALL (0x2000000 + SYS_close)
+    #define EXIT_SYSCALL  (0x2000000 + SYS_exit)
 #else
     #define WRITE_SYSCALL SYS_write
     #define OPEN_SYSCALL  SYS_open
     #define CLOSE_SYSCALL SYS_close
+    #define EXIT_SYSCALL SYS_exit
 #endif
 
 int s_len(char * s) {
@@ -33,7 +35,7 @@ void print(int fd, char * s) {
     nolibc_syscall(WRITE_SYSCALL, 3, fd, s, s_len(s));
 }
 
-int main(int argc, char ** argv) {
+void main(int argc, char ** argv) {
     int   i,
           fd;
     char *lazy_space,
@@ -42,7 +44,7 @@ int main(int argc, char ** argv) {
     if (argc < 2) {
         usage = "usage: example FILE [...]\n";
         print(1, usage);
-        return 1;
+        nolibc_syscall(EXIT_SYSCALL, 1, 1);
     }
 
     fd = nolibc_syscall(OPEN_SYSCALL, 3, argv[1], O_WRONLY | O_CREAT, S_IRWXU);
@@ -55,5 +57,5 @@ int main(int argc, char ** argv) {
         print(fd, argv[i]);
     }
 
-    return 0;
+    nolibc_syscall(EXIT_SYSCALL, 1, 0);
 }
