@@ -50,9 +50,10 @@ void myexit(int status) {
     nolibc_syscall(EXIT_SYSCALL, 1, status);
 }
 
-/* out entry code */
+
 int main(int argc, char ** argv);
 
+/* our entry code */
 void start() {
     /* The SVR4/i386 ABI says that the stack will have (among other things):
      *
@@ -64,15 +65,15 @@ void start() {
              status;
     char   **argv;
 
-    /* get our stack address to extract argc and argv */
+    /* get our frame address to extract argc and argv */
     sp = __builtin_frame_address(0) + 8;
 
     argc = *(long int*)sp;
     argv = (char**)(sp + 8);
 
     status = main(argc, argv);
-
-    nolibc_syscall(EXIT_SYSCALL, 1, status);
+    
+    myexit(status);
 }
 
 /* the actual program */
@@ -99,5 +100,5 @@ int main(int argc, char ** argv) {
     }
 
     myclose(fd);
-    myexit(0);
+    return 0;
 }

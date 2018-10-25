@@ -8,10 +8,12 @@ UNAME_S := $(shell uname -s)
 
 PREFIX  :=
 
+# MacOS is wack.
 ifeq ($(UNAME_S),Darwin)
 	CFLAGS  += -fno-stack-protector
-	LDFLAGS += -lSystem -macosx_version_min $(shell system_profiler SPSoftwareDataType | grep 'System Version' | awk '{ print $$4; }')
-	PREFIX  += "_"
+	LDFLAGS += -static
+	# LDFLAGS += -macosx_version_min $(shell system_profiler SPSoftwareDataType | grep 'System Version' | awk '{ print $$4; }')
+	PREFIX  += _
 endif
 
 all: libnolibc_syscall.a example

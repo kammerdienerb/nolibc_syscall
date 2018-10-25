@@ -1,5 +1,5 @@
 /*
- * nolibc_syscall.c
+ * nolibc_syscall.h
  *
  * x86_64 system call interface that is not a part
  * of or dependent upon libc.
