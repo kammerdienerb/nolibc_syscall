@@ -12,7 +12,7 @@ PREFIX  :=
 ifeq ($(UNAME_S),Darwin)
 	CFLAGS  += -fno-stack-protector
 	LDFLAGS += -static
-	# LDFLAGS += -macosx_version_min $(shell system_profiler SPSoftwareDataType | grep 'System Version' | awk '{ print $$4; }')
+	LDFLAGS += -macosx_version_min $(shell system_profiler SPSoftwareDataType | grep 'System Version' | awk '{ print $$4; }')
 	PREFIX  += _
 endif
 
