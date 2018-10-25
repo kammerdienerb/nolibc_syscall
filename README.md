@@ -1,6 +1,6 @@
 # nolibc_syscall
 
-There are only two ways in which POSIX system calls are exposed: assembly, and the C standard library wrappers. _nolibc\_syscall_ is a small C library designed to allow the use of system calls on x86_64 without the need to link with the C standard library. This can be useful when trying to create very small executables or limit dependencies. At the very least, it was fun to write.
+There are only two ways in which system calls on UNIX-like systems are exposed: assembly, and the C standard library wrappers. _nolibc\_syscall_ is a small C library designed to allow the use of system calls on x86_64 without the need to link with the C standard library. This can be useful when trying to create very small executables or limit dependencies. At the very least, it was fun to write.
 
 ## Building ##
 `make`
