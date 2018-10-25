@@ -7,4 +7,7 @@ There are only two ways in which POSIX system calls are exposed: assembly, and t
 
 ## Using ##
 `#include "nolibc_syscall.h"` in your C file.
+
+Link with `-lnolibc_syscall`.
+
 See _example.c_ for example usage. The _Makefile_ can provide insight into building applications that don't rely on _libc_.
