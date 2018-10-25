@@ -10,7 +10,7 @@
 
 #include <stdarg.h>
 
-long int nolibc_syscall0(long int n) {
+static inline long int nolibc_syscall0(long int n) {
     long int r;
     __asm__ volatile (
     "syscall\n\t"
@@ -21,7 +21,7 @@ long int nolibc_syscall0(long int n) {
     return r;
 }
 
-long int nolibc_syscall1(long int n, long int arg1) {
+static inline long int nolibc_syscall1(long int n, long int arg1) {
     long int r;
     register long int a1 __asm__ ("rdi") = arg1;
     __asm__ volatile (
@@ -33,7 +33,7 @@ long int nolibc_syscall1(long int n, long int arg1) {
     return r;
 }
 
-long int nolibc_syscall2(long int n, long int arg1, long int arg2) {
+static inline long int nolibc_syscall2(long int n, long int arg1, long int arg2) {
     long int r;
     register long int a2 __asm__ ("rsi") = arg2;
     register long int a1 __asm__ ("rdi") = arg1;
@@ -46,7 +46,7 @@ long int nolibc_syscall2(long int n, long int arg1, long int arg2) {
     return r;
 }
 
-long int nolibc_syscall3(long int n, long int arg1, long int arg2, long int arg3) {
+static inline long int nolibc_syscall3(long int n, long int arg1, long int arg2, long int arg3) {
     long int r;
     register long int a3 __asm__ ("rdx") = arg3;
     register long int a2 __asm__ ("rsi") = arg2;
@@ -60,7 +60,7 @@ long int nolibc_syscall3(long int n, long int arg1, long int arg2, long int arg3
     return r;
 }
 
-long int nolibc_syscall4(long int n, long int arg1, long int arg2, long int arg3, long int arg4) {
+static inline long int nolibc_syscall4(long int n, long int arg1, long int arg2, long int arg3, long int arg4) {
     long int r;
     register long int a4 __asm__ ("r10") = arg4;
     register long int a3 __asm__ ("rdx") = arg3;
@@ -75,7 +75,7 @@ long int nolibc_syscall4(long int n, long int arg1, long int arg2, long int arg3
     return r;
 }
 
-long int nolibc_syscall5(long int n, long int arg1, long int arg2, long int arg3, long int arg4, long int arg5) {
+static inline long int nolibc_syscall5(long int n, long int arg1, long int arg2, long int arg3, long int arg4, long int arg5) {
     long int r;
     register long int a5 __asm__ ("r8")  = arg5;
     register long int a4 __asm__ ("r10") = arg4;
@@ -91,7 +91,7 @@ long int nolibc_syscall5(long int n, long int arg1, long int arg2, long int arg3
     return r;
 }
 
-long int nolibc_syscall6(long int n, long int arg1, long int arg2, long int arg3, long int arg4, long int arg5, long int arg6) {
+static inline long int nolibc_syscall6(long int n, long int arg1, long int arg2, long int arg3, long int arg4, long int arg5, long int arg6) {
     long int r;
     register long int a6 __asm__ ("r9")  = arg6;
     register long int a5 __asm__ ("r8")  = arg5;
