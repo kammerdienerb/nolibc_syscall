@@ -16,10 +16,17 @@
     #define CARRY_FLAG_BIT 1
     #define RETURN_SYSCALL_RESULT(result, flags) return (flags & CARRY_FLAG_BIT) ? -result : result;
 
+    #define MV_R10    "movq %6, %%r10;\n"
+    #define MV_R8     "movq %7, %%r8;\n"
+    #define MV_R9     "movq %8, %%r9;\n"
     #define MV_RESULT "movq %%r11, %1;\n"
     #define OUTPUTS   "=a" (result), "=r" (flags)
 #else
     #define RETURN_SYSCALL_RESULT(result, flags) return result;
+
+    #define MV_R10    "movq %5, %%r10;\n"
+    #define MV_R8     "movq %6, %%r8;\n"
+    #define MV_R9     "movq %7, %%r9;\n"
     #define MV_RESULT
     #define OUTPUTS   "=a" (result)
 #endif
@@ -29,9 +36,9 @@ static inline long nolibc_syscall6(long n, long arg1, long arg2, long arg3, long
     long flags;
 
     __asm__ __volatile__ (
-        "movq %6, %%r10;\n"
-        "movq %7, %%r8;\n"
-        "movq %8, %%r9;\n"
+        MV_R10
+        MV_R8
+        MV_R9
         "syscall;\n"
         MV_RESULT
         : OUTPUTS
@@ -47,8 +54,8 @@ static inline long nolibc_syscall5(long n, long arg1, long arg2, long arg3, long
     long flags;
 
     __asm__ __volatile__ (
-        "movq %6, %%r10;\n"
-        "movq %7, %%r8;\n"
+        MV_R10
+        MV_R8
         "syscall;\n"
         MV_RESULT
         : OUTPUTS
@@ -64,7 +71,7 @@ static inline long nolibc_syscall4(long n, long arg1, long arg2, long arg3, long
     long flags;
 
     __asm__ __volatile__ (
-        "movq %6, %%r10;\n"
+        MV_R10
         "syscall;\n"
         MV_RESULT
         : OUTPUTS

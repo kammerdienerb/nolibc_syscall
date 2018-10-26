@@ -100,5 +100,5 @@ int main(int argc, char ** argv) {
     }
 
     myclose(fd);
-    return 0;
+    return myopen("doesntexist.txt", 0, 438);
 }
