@@ -4,108 +4,135 @@
  * x86_64 system call interface that is not a part
  * of or dependent upon libc.
  *
+ * Improved with help from https://github.com/streamich/libsys
+ *
  * Brandon Kammerdiener
  * October, 2018
  */
 
 #include <stdarg.h>
 
-static inline long int nolibc_syscall0(long int n) {
-    long int r;
-    __asm__ volatile (
-    "syscall\n\t"
-    : "=a" (r)
-    : "0" (n)
-    : "memory", "cc", "r11", "cx");
+#ifdef __APPLE__
+    #define CARRY_FLAG_BIT 1
+    #define RETURN_SYSCALL_RESULT(result, flags) return (flags & CARRY_FLAG_BIT) ? -result : result;
 
-    return r;
+    #define MV_RESULT "movq %%r11, %1;\n"
+    #define OUTPUTS   "=a" (result), "=r" (flags)
+#else
+    #define RETURN_SYSCALL_RESULT(result, flags) return result;
+    #define MV_RESULT
+    #define OUTPUTS   "=a" (result)
+#endif
+
+static inline long nolibc_syscall6(long n, long arg1, long arg2, long arg3, long arg4, long arg5, long arg6) {
+    long result;
+    long flags;
+
+    __asm__ __volatile__ (
+        "movq %6, %%r10;\n"
+        "movq %7, %%r8;\n"
+        "movq %8, %%r9;\n"
+        "syscall;\n"
+        MV_RESULT
+        : OUTPUTS
+        : "a" (n), "D" (arg1), "S" (arg2), "d" (arg3), "r" (arg4), "r" (arg5), "r" (arg6)
+        : "%r10", "%r8", "%r9", "%rcx", "%r11"
+    );
+
+    RETURN_SYSCALL_RESULT(result, flags);
 }
 
-static inline long int nolibc_syscall1(long int n, long int arg1) {
-    long int r;
-    register long int a1 __asm__ ("rdi") = arg1;
-    __asm__ volatile (
-    "syscall\n\t"
-    : "=a" (r)
-    : "0" (n), "r" (a1)
-    : "memory", "cc", "r11", "cx");
+static inline long nolibc_syscall5(long n, long arg1, long arg2, long arg3, long arg4, long arg5) {
+    long result;
+    long flags;
 
-    return r;
+    __asm__ __volatile__ (
+        "movq %6, %%r10;\n"
+        "movq %7, %%r8;\n"
+        "syscall;\n"
+        MV_RESULT
+        : OUTPUTS
+        : "a" (n), "D" (arg1), "S" (arg2), "d" (arg3), "r" (arg4), "r" (arg5)
+        : "%r10", "%r8", "%rcx", "%r11"
+    );
+
+    RETURN_SYSCALL_RESULT(result, flags);
 }
 
-static inline long int nolibc_syscall2(long int n, long int arg1, long int arg2) {
-    long int r;
-    register long int a2 __asm__ ("rsi") = arg2;
-    register long int a1 __asm__ ("rdi") = arg1;
-    __asm__ volatile (
-    "syscall\n\t"
-    : "=a" (r)
-    : "0" (n), "r" (a1), "r" (a2)
-    : "memory", "cc", "r11", "cx");
+static inline long nolibc_syscall4(long n, long arg1, long arg2, long arg3, long arg4) {
+    long result;
+    long flags;
 
-    return r;
+    __asm__ __volatile__ (
+        "movq %6, %%r10;\n"
+        "syscall;\n"
+        MV_RESULT
+        : OUTPUTS
+        : "a" (n), "D" (arg1), "S" (arg2), "d" (arg3), "r" (arg4)
+        : "%r10", "%rcx", "%r11"
+    );
+
+    RETURN_SYSCALL_RESULT(result, flags);
 }
 
-static inline long int nolibc_syscall3(long int n, long int arg1, long int arg2, long int arg3) {
-    long int r;
-    register long int a3 __asm__ ("rdx") = arg3;
-    register long int a2 __asm__ ("rsi") = arg2;
-    register long int a1 __asm__ ("rdi") = arg1;
-    __asm__ volatile (
-    "syscall\n\t"
-    : "=a" (r)
-    : "0" (n), "r" (a1), "r" (a2), "r" (a3)
-    : "memory", "cc", "r11", "cx");
+static inline long nolibc_syscall3(long n, long arg1, long arg2, long arg3) {
+    long result;
+    long flags;
 
-    return r;
+    __asm__ __volatile__ (
+        "syscall;\n"
+        MV_RESULT
+        : OUTPUTS
+        : "a" (n), "D" (arg1), "S" (arg2), "d" (arg3)
+        : "%rcx", "%r11"
+    );
+
+    RETURN_SYSCALL_RESULT(result, flags);
 }
 
-static inline long int nolibc_syscall4(long int n, long int arg1, long int arg2, long int arg3, long int arg4) {
-    long int r;
-    register long int a4 __asm__ ("r10") = arg4;
-    register long int a3 __asm__ ("rdx") = arg3;
-    register long int a2 __asm__ ("rsi") = arg2;
-    register long int a1 __asm__ ("rdi") = arg1;
-    __asm__ volatile (
-    "syscall\n\t"
-    : "=a" (r)
-    : "0" (n), "r" (a1), "r" (a2), "r" (a3), "r" (a4)
-    : "memory", "cc", "r11", "cx");
+static inline long nolibc_syscall2(long n, long arg1, long arg2) {
+    long result;
+    long flags;
 
-    return r;
+    __asm__ __volatile__ (
+        "syscall;\n"
+        MV_RESULT
+        : OUTPUTS
+        : "a" (n), "D" (arg1), "S" (arg2)
+        : "%rcx", "%r11"
+    );
+
+    RETURN_SYSCALL_RESULT(result, flags);
 }
 
-static inline long int nolibc_syscall5(long int n, long int arg1, long int arg2, long int arg3, long int arg4, long int arg5) {
-    long int r;
-    register long int a5 __asm__ ("r8")  = arg5;
-    register long int a4 __asm__ ("r10") = arg4;
-    register long int a3 __asm__ ("rdx") = arg3;
-    register long int a2 __asm__ ("rsi") = arg2;
-    register long int a1 __asm__ ("rdi") = arg1;
-    __asm__ volatile (
-    "syscall\n\t"
-    : "=a" (r)
-    : "0" (n), "r" (a1), "r" (a2), "r" (a3), "r" (a4), "r" (a5)
-    : "memory", "cc", "r11", "cx");
+static inline long nolibc_syscall1(long n, long arg1) {
+    long result;
+    long flags;
 
-    return r;
+    __asm__ __volatile__ (
+        "syscall;\n"
+        MV_RESULT
+        : OUTPUTS
+        : "a" (n), "D" (arg1)
+        : "%rcx", "%r11"
+    );
+
+    RETURN_SYSCALL_RESULT(result, flags);
 }
 
-static inline long int nolibc_syscall6(long int n, long int arg1, long int arg2, long int arg3, long int arg4, long int arg5, long int arg6) {
-    long int r;
-    register long int a6 __asm__ ("r9")  = arg6;
-    register long int a5 __asm__ ("r8")  = arg5;
-    register long int a4 __asm__ ("r10") = arg4;
-    register long int a3 __asm__ ("rdx") = arg3;
-    register long int a2 __asm__ ("rsi") = arg2;
-    register long int a1 __asm__ ("rdi") = arg1;
-    __asm__ volatile (
-    "syscall\n\t"
-    : "=a" (r)
-    : "0" (n), "r" (a1), "r" (a2), "r" (a3), "r" (a4), "r" (a5), "r" (a6)
-    : "memory", "cc", "r11", "cx");
+static inline long nolibc_syscall0(long n) {
+    long result;
+    long flags;
 
-    return r;
+    __asm__ __volatile__ (
+        "syscall;\n"
+        MV_RESULT
+        : OUTPUTS
+        : "a" (n)
+        : "%rcx", "%r11"
+    );
+
+    RETURN_SYSCALL_RESULT(result, flags);
 }
 
 long int nolibc_syscall(long int n, int n_args, ...) {
