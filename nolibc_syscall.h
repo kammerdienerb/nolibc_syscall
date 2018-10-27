@@ -8,4 +8,9 @@
  * October, 2018
  */
 
+#ifndef _NOLIBC_SYSCALL_H_
+#define _NOLIBC_SYSCALL_H_
+
 long int nolibc_syscall(long int n, int n_args, ...);
+
+#endif
