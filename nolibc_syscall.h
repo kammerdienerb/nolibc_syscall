@@ -11,6 +11,14 @@
 #ifndef _NOLIBC_SYSCALL_H_
 #define _NOLIBC_SYSCALL_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 long int nolibc_syscall(long int n, int n_args, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
