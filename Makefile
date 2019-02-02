@@ -1,7 +1,7 @@
 CC ?= gcc
 LD ?= ld
 
-CFLAGS  := -nostdlib -O3
+CFLAGS  := -nostdlib -fno-stack-protector -O3 
 LDFLAGS := -L. -lnolibc_syscall
 
 UNAME_S := $(shell uname -s)
@@ -10,7 +10,6 @@ PREFIX  :=
 
 # MacOS is wack.
 ifeq ($(UNAME_S),Darwin)
-	CFLAGS  += -fno-stack-protector
 	LDFLAGS += -static
 	LDFLAGS += -macosx_version_min $(shell system_profiler SPSoftwareDataType | grep 'System Version' | awk '{ print $$4; }')
 	PREFIX  += _
