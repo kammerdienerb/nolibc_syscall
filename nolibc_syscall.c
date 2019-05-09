@@ -11,6 +11,7 @@
  */
 
 #include <stdarg.h>
+#include "nolibc_syscall.h"
 
 #ifdef __APPLE__
     #define CARRY_FLAG_BIT 1
@@ -197,4 +198,11 @@ long int nolibc_syscall(long int n, int n_args, ...) {
     va_end(args);
 
     return r;
+}
+
+sigaction_handler_t* nolibc_syscall_sigaction_sa_handler(struct sigaction* act) {
+    return &(act->sa_handler);
+}
+int* nolibc_syscall_sigaction_sa_flags(struct sigaction* act) {
+    return &(act->sa_flags);
 }
